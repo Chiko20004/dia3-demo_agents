@@ -23,16 +23,42 @@ class UserInterface:
 				st.markdown(message["content"])
 
 
-	def run(self):
-		text_interaction = st.chat_input(
+	def get_text_interaction(self):
+		chat_interaction = st.chat_input(
 			"Que veux tu moussaillon ?",
 			accept_file=False,
-			accept_audio=False
+			accept_audio=True
 			)
+
+		if not chat_interaction:
+			return None
+
+		if chat_interaction.audio:
+			return self.transcribe_audio(chat_interaction.audio)
+
+		return chat_interaction.text
+
+
+	def transcribe_audio(self, audio_interaction):
+		transcription = self.conversation_agent_object.groq_client.audio.transcriptions.create(
+			file=("audio.wav", audio_interaction.getvalue()),
+			model="whisper-large-v3-turbo",
+			language="fr",
+		)
+		return transcription.text
+
+
+
+
+	def run(self):
+		text_interaction = self.get_text_interaction()
 
 		if text_interaction :
 			self.conversation_agent_object.ask_llm(text_interaction)
-			self.show_discussion_history()
+
+		self.show_discussion_history()
+
+
 
 
 
