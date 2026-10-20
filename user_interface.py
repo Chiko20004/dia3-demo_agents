@@ -6,8 +6,8 @@ from llm_agent import ConversationAgent
 
 class UserInterface:
 	def __init__(self):
-		st.set_page_config(page_title="Jarvis")
-		st.title("Barbe-Quasar")
+		st.set_page_config(page_title="Spidey", page_icon="🕸️", layout="wide")
+		st.title("Spider-Man")
 		self.conversation_agent_object = self.get_persistant_conversation_agent()
 		self.vision_model = "qwen/qwen3.8-27b"
 
@@ -32,7 +32,7 @@ class UserInterface:
 		transcription = self.conversation_agent_object.groq_client.audio.transcriptions.create(
 			file=("audio.wav", audio_interaction.getvalue()),
 			model="whisper-large-v3-turbo",
-			language="fr",
+			language="en",
 		)
 		return transcription.text
 
@@ -47,7 +47,7 @@ class UserInterface:
 				{
 					"role": "user",
 					"content": [
-						{"type": "text", "text": "Tu es les yeux d'un assistant qui ne peut pas voir les images. Décris cette image en détail, en français : les personnages ou objets (et qui ils sont si tu les reconnais), les couleurs, le décor, l'action et l'ambiance. Ensuite, si l'image contient du texte, recopie-le mot pour mot. Commence ta réponse par « Description : »."},
+						{"type": "text", "text": "You are the eyes of an assistant that cannot see images. Describe this image in detail, in English: the characters or objects (and who they are if you recognize them), the colors, the setting, the action and the mood. Then, if the image contains any text, copy it word for word. Start your answer with \"Description:\"."},
 						{"type": "image_url", "image_url": {"url": image_url}},
 					],
 				}
@@ -67,7 +67,7 @@ class UserInterface:
 
 	def read_uploaded_file(self, uploaded_file):
 		if uploaded_file.type.startswith("image/"):
-			content = "(Description automatique de l'image, tu peux répondre comme si tu la voyais.)\n\n" + self.describe_image(uploaded_file)
+			content = "(Automatic description of the image, you can answer as if you could see it.)\n\n" + self.describe_image(uploaded_file)
 		elif uploaded_file.type == "application/pdf":
 			content = self.read_pdf(uploaded_file)
 		else:
@@ -78,7 +78,7 @@ class UserInterface:
 
 	def get_text_interaction(self):
 		chat_interaction = st.chat_input(
-			"Que veux tu moussaillon ?",
+			"What's up, neighbor?",
 			accept_file="multiple",
 			file_type=["png", "jpg", "jpeg", "pdf", "txt", "md", "csv"],
 			accept_audio=True
