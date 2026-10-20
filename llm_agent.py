@@ -12,21 +12,21 @@ def read_file(file_path):
         return file.read()
 
 
-def ask_llm(question):
+def ask_llm(question, history=None):
     
     client = Groq(api_key=os.environ["GROQ_KEY"])
 
+    messages = [
+        {
+            "role": "system",
+            "content": read_file(file_path="./context.txt")
+        }
+    ]
+    messages += history or []
+    messages.append({"role": "user", "content": question})
+
     chat_completion = client.chat.completions.create(
-        messages=[
-            {
-                "role": "system",
-                "content": read_file(file_path="./context.txt")
-            },
-            {
-                "role": "user",
-                "content": question,
-            }
-        ],
+        messages=messages,
         model="openai/gpt-oss-120b",
         include_reasoning=False,
     )
